@@ -154,7 +154,7 @@ type bundleDataVerifier struct {
 	// as referred to by placement directives.
 	machineRefCounts map[string]int
 
-	errors []error
+	errors            []error
 	verifyConstraints func(c string) error
 }
 
@@ -196,6 +196,9 @@ func (bd *BundleData) Verify(verifyConstraints func(c string) error) error {
 		verifier.machineRefCounts[id] = 0
 	}
 
+	if bd.Series != "" && !IsValidSeries(bd.Series) {
+		verifier.addErrorf("bundle declares an invalid series %q", bd.Series)
+	}
 	verifier.verifyMachines()
 	verifier.verifyServices()
 	verifier.verifyRelations()
@@ -221,8 +224,11 @@ func (verifier *bundleDataVerifier) verifyMachines() {
 	}
 }
 
-// TODO check at least one service is defined
 func (verifier *bundleDataVerifier) verifyServices() {
+	if len(verifier.bd.Services) == 0 {
+		verifier.addErrorf("no services found in the bundle")
+		return
+	}
 	for name, svc := range verifier.bd.Services {
 		if svc.NumUnits < 0 {
 			verifier.addErrorf("negative number of units specified on service %q", name)
@@ -348,6 +354,7 @@ func (verifier *bundleDataVerifier) verifyRelations() {
 		if svcPair[0] == svcPair[1] {
 			verifier.addErrorf("relation %q relates a service to itself", relPair)
 		}
+
 	}
 }
 
