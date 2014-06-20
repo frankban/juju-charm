@@ -196,9 +196,9 @@ func (bd *BundleData) Verify(verifyConstraints func(c string) error) error {
 		verifier.machineRefCounts[id] = 0
 	}
 
-	verifier.verifyRelations()
-	verifier.verifyServices()
 	verifier.verifyMachines()
+	verifier.verifyServices()
+	verifier.verifyRelations()
 
 	for id, count := range verifier.machineRefCounts {
 		if count == 0 {
@@ -221,6 +221,7 @@ func (verifier *bundleDataVerifier) verifyMachines() {
 	}
 }
 
+// TODO check at least one service is defined
 func (verifier *bundleDataVerifier) verifyServices() {
 	for name, svc := range verifier.bd.Services {
 		if svc.NumUnits < 0 {
@@ -327,6 +328,7 @@ func ParsePlacement(p string) (*UnitPlacement, error) {
 	return &up, nil
 }
 
+// TODO check that the same relation isn't specified twice.
 func (verifier *bundleDataVerifier) verifyRelations() {
 	for i, relPair := range verifier.bd.Relations {
 		if len(relPair) != 2 {
