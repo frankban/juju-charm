@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -334,8 +335,8 @@ func ParsePlacement(p string) (*UnitPlacement, error) {
 	return &up, nil
 }
 
-// TODO check that the same relation isn't specified twice.
 func (verifier *bundleDataVerifier) verifyRelations() {
+	seen := make(map[[2]string]bool)
 	for i, relPair := range verifier.bd.Relations {
 		if len(relPair) != 2 {
 			verifier.addErrorf("relation %d has %d relations, not 2", i, len(relPair))
@@ -354,7 +355,12 @@ func (verifier *bundleDataVerifier) verifyRelations() {
 		if svcPair[0] == svcPair[1] {
 			verifier.addErrorf("relation %q relates a service to itself", relPair)
 		}
-
+		sort.Strings(svcPair[:])
+		if _, ok := seen[svcPair]; ok {
+			verifier.addErrorf("relation %q is defined more than one time", relPair)
+		} else {
+			seen[svcPair] = true
+		}
 	}
 }
 
