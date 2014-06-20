@@ -74,7 +74,7 @@ func (s *CharmDirSuite) TestArchiveTo(c *gc.C) {
 
 	var metaf, instf, emptyf, revf, symf *zip.File
 	for _, f := range zipr.File {
-		c.Logf("CharmArchived file: %s", f.Name)
+		c.Logf("Archived file: %s", f.Name)
 		switch f.Name {
 		case "revision":
 			revf = f
