@@ -4,6 +4,7 @@
 package testing
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -280,6 +281,11 @@ func (s *MockCharmStore) Get(charmURL *charm.URL) (charm.Charm, error) {
 		return nil, fmt.Errorf("charm not found in mock store: %s", charmURL)
 	}
 	return charm, nil
+}
+
+// GetBundle is only defined for implementing Interface.
+func (s *MockCharmStore) GetBundle(curl *charm.URL) (charm.Bundle, error) {
+	return nil, errors.New("not implemented")
 }
 
 // Latest implements charm/charmrepo.Interface.Latest.

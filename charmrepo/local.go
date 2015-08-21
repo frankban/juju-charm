@@ -131,3 +131,7 @@ func (r *LocalRepository) Get(curl *charm.URL) (charm.Charm, error) {
 	}
 	return nil, charmNotFound(curl, r.Path)
 }
+
+func (r *LocalRepository) GetBundle(curl *charm.URL) (charm.Bundle, error) {
+	return nil, errgo.New("not implemented yet")
+}
